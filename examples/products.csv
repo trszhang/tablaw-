@@ -1,0 +1,16 @@
+product_id,product_name,category,unit_price,cost_price,stock_quantity,supplier,launch_date,rating,review_count
+P001,Laptop Pro 14,Computers,8500,4800,120,TechCorp,2022-03-01,4.5,22
+P002,Laptop Air 13,Computers,6200,3500,95,TechCorp,2022-06-15,4.6,135
+P003,Gaming Desktop,Computers,12000,7200,40,PowerPC,2021-11-01,3.8,387
+P004,4K Monitor 27,Displays,3200,1600,200,ViewMax,2023-01-10,3.7,389
+P005,Curved Monitor 34,Displays,4500,2400,75,ViewMax,2022-09-01,4.8,54
+P006,Mech Keyboard,Peripherals,580,210,500,TypeWell,2020-05-20,4.4,26
+P007,Wireless Mouse,Peripherals,320,110,800,TypeWell,2020-08-01,3.5,121
+P008,USB-C Hub 7in1,Accessories,280,95,600,ConnectPro,2021-07-15,3.8,318
+P009,NC Headset,Audio,1200,550,300,SoundMax,2023-02-28,3.5,111
+P010,Webcam 4K,Peripherals,550,220,180,VisionTech,2022-12-01,4.6,369
+P011,Laptop Stand,Accessories,180,60,1000,ErgoCo,2021-04-01,4.3,122
+P012,Ergonomic Chair,Furniture,3800,1700,50,ComfortPlus,2021-10-01,4.2,152
+P013,Adjustable Desk,Furniture,6200,3100,30,ComfortPlus,2022-01-15,4.7,13
+P014,SSD 1TB External,Storage,480,210,400,DataSafe,2022-07-01,4.6,91
+P015,Portable Projector,Electronics,2800,1400,45,ProjectMax,2023-04-01,4.5,184

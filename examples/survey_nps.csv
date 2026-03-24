@@ -1,0 +1,201 @@
+respondent_id,age,role,country,use_frequency,nps_score,satisfaction,would_recommend,top_feature,main_pain_point,source,months_using
+R001,38,Student,China,Daily,8,4,Yes,Support,None,Conference,15
+R002,55,Student,Germany,Rarely,6,3,Maybe,Speed,Slow,Social,31
+R003,57,Consultant,China,Several/week,6,3,Maybe,Support,High price,Conference,31
+R004,53,Engineer,China,Monthly,4,4,No,Accuracy,Too complex,Conference,15
+R005,27,Researcher,USA,Weekly,6,3,Maybe,Price,Slow,Search,32
+R006,23,Data Analyst,USA,Several/week,9,4,Yes,Speed,None,Conference,1
+R007,62,Engineer,Korea,Monthly,7,4,Yes,Price,High price,Ad,22
+R008,51,Engineer,USA,Several/week,3,4,No,Price,None,Ad,24
+R009,36,Data Analyst,China,Weekly,7,5,Yes,API,None,Referral,36
+R010,32,Researcher,China,Several/week,9,4,Yes,Support,None,Ad,7
+R011,47,Manager,USA,Daily,7,4,Yes,API,High price,Referral,7
+R012,59,Data Analyst,UK,Monthly,7,4,Yes,Integration,Slow,Conference,33
+R013,25,Consultant,Australia,Daily,8,3,Yes,API,None,Ad,33
+R014,33,Student,Singapore,Monthly,6,4,Maybe,Speed,Slow,Conference,21
+R015,37,Engineer,China,Several/week,6,2,Maybe,Accuracy,Missing features,Ad,9
+R016,54,Engineer,Singapore,Daily,10,3,Yes,Price,None,Referral,36
+R017,40,Student,China,Weekly,4,4,No,Support,High price,Social,33
+R018,44,Consultant,USA,Several/week,9,3,Yes,Price,None,Ad,35
+R019,55,Data Analyst,China,Daily,5,5,Maybe,UI Design,Too complex,Search,13
+R020,38,Manager,Singapore,Daily,5,5,Maybe,Support,None,Referral,14
+R021,28,Consultant,Korea,Monthly,1,5,No,Support,None,Social,36
+R022,40,Student,Japan,Several/week,8,2,Yes,Integration,Slow,Ad,21
+R023,34,Consultant,Korea,Rarely,5,4,Maybe,API,None,Ad,15
+R024,59,Consultant,Germany,Rarely,6,3,Maybe,UI Design,None,Social,19
+R025,33,Student,USA,Several/week,5,4,Maybe,Integration,Too complex,Ad,18
+R026,38,Data Analyst,China,Weekly,6,4,Maybe,Support,High price,Search,10
+R027,62,Consultant,Singapore,Rarely,7,2,Yes,Accuracy,Slow,Conference,36
+R028,36,Manager,USA,Several/week,5,4,Maybe,API,None,Social,27
+R029,35,Student,China,Several/week,5,3,Maybe,Accuracy,Missing features,Social,34
+R030,22,Data Analyst,Japan,Several/week,8,3,Yes,Integration,High price,Conference,16
+R031,29,Researcher,China,Rarely,4,3,No,Support,Missing features,Search,34
+R032,50,Researcher,China,Monthly,5,2,Maybe,Support,High price,Referral,33
+R033,56,Consultant,China,Daily,10,5,Yes,Speed,High price,Social,28
+R034,49,Student,Singapore,Monthly,9,4,Yes,Speed,None,Social,2
+R035,25,Manager,UK,Several/week,10,4,Yes,Price,Too complex,Conference,15
+R036,47,Researcher,China,Rarely,6,2,Maybe,Integration,None,Search,35
+R037,59,Data Analyst,Germany,Daily,9,4,Yes,Speed,Missing features,Conference,7
+R038,40,Researcher,China,Daily,7,4,Yes,API,None,Search,31
+R039,56,Engineer,Australia,Daily,5,4,Maybe,UI Design,Missing features,Referral,1
+R040,22,Consultant,USA,Weekly,9,3,Yes,Price,None,Search,20
+R041,35,Researcher,Korea,Daily,7,4,Yes,API,None,Social,11
+R042,29,Manager,Japan,Daily,5,4,Maybe,Price,None,Search,36
+R043,26,Engineer,China,Several/week,6,3,Maybe,Support,None,Ad,22
+R044,40,Consultant,China,Several/week,7,4,Yes,UI Design,Missing features,Ad,29
+R045,31,Consultant,USA,Several/week,6,3,Maybe,API,Missing features,Ad,11
+R046,49,Engineer,Singapore,Daily,5,4,Maybe,UI Design,None,Referral,31
+R047,57,Data Analyst,China,Several/week,8,3,Yes,Price,Too complex,Referral,9
+R048,62,Data Analyst,Germany,Monthly,7,4,Yes,Speed,None,Conference,2
+R049,35,Data Analyst,USA,Monthly,9,2,Yes,Price,None,Ad,10
+R050,40,Manager,USA,Several/week,6,4,Maybe,Price,Too complex,Ad,24
+R051,61,Student,China,Several/week,10,3,Yes,Price,High price,Ad,11
+R052,31,Student,Germany,Daily,5,5,Maybe,Accuracy,Too complex,Social,32
+R053,35,Consultant,Korea,Daily,7,4,Yes,Accuracy,Slow,Ad,30
+R054,28,Student,Australia,Monthly,7,5,Yes,Support,None,Referral,17
+R055,46,Engineer,USA,Weekly,7,3,Yes,API,Too complex,Conference,17
+R056,44,Engineer,USA,Several/week,6,5,Maybe,Integration,None,Search,33
+R057,54,Student,China,Monthly,5,3,Maybe,UI Design,High price,Social,24
+R058,48,Engineer,Germany,Weekly,7,4,Yes,Integration,None,Ad,31
+R059,23,Manager,China,Daily,5,5,Maybe,Price,None,Social,9
+R060,25,Manager,China,Weekly,9,5,Yes,UI Design,None,Ad,2
+R061,27,Manager,USA,Monthly,7,3,Yes,Integration,None,Ad,11
+R062,59,Manager,Japan,Daily,4,4,No,Price,Missing features,Social,22
+R063,46,Researcher,China,Rarely,6,3,Maybe,Speed,High price,Conference,33
+R064,33,Researcher,Korea,Weekly,6,4,Maybe,Price,Too complex,Conference,33
+R065,60,Consultant,Singapore,Monthly,4,4,No,API,None,Ad,34
+R066,49,Manager,Australia,Several/week,8,5,Yes,Integration,None,Ad,23
+R067,58,Data Analyst,USA,Weekly,5,4,Maybe,Accuracy,Slow,Social,6
+R068,34,Data Analyst,Germany,Daily,4,5,No,API,Too complex,Conference,34
+R069,42,Researcher,China,Daily,6,5,Maybe,UI Design,Slow,Conference,17
+R070,61,Engineer,Australia,Daily,8,3,Yes,Integration,None,Social,27
+R071,57,Consultant,USA,Weekly,6,3,Maybe,Accuracy,None,Referral,26
+R072,36,Researcher,UK,Weekly,6,4,Maybe,UI Design,Too complex,Social,33
+R073,25,Manager,China,Several/week,5,3,Maybe,Support,Too complex,Search,10
+R074,38,Manager,China,Several/week,9,4,Yes,Price,Too complex,Ad,26
+R075,60,Data Analyst,Australia,Weekly,6,2,Maybe,API,High price,Ad,29
+R076,55,Engineer,China,Daily,7,5,Yes,API,None,Conference,34
+R077,45,Manager,Japan,Weekly,3,3,No,UI Design,Too complex,Referral,26
+R078,55,Data Analyst,Germany,Several/week,5,3,Maybe,Speed,Too complex,Conference,19
+R079,44,Engineer,China,Weekly,8,3,Yes,UI Design,Slow,Ad,1
+R080,26,Consultant,China,Daily,7,4,Yes,Speed,None,Conference,17
+R081,50,Researcher,USA,Monthly,6,4,Maybe,API,High price,Referral,30
+R082,52,Data Analyst,China,Weekly,4,5,No,Integration,None,Social,15
+R083,56,Data Analyst,Germany,Monthly,4,3,No,Accuracy,High price,Referral,6
+R084,57,Manager,USA,Several/week,8,4,Yes,Accuracy,High price,Conference,18
+R085,34,Researcher,Germany,Daily,6,4,Maybe,UI Design,None,Social,17
+R086,61,Engineer,China,Daily,3,4,No,Speed,Too complex,Search,32
+R087,24,Researcher,China,Weekly,8,4,Yes,Accuracy,Slow,Conference,18
+R088,39,Researcher,China,Several/week,5,5,Maybe,Price,High price,Search,34
+R089,54,Engineer,China,Monthly,6,2,Maybe,Support,None,Social,30
+R090,22,Data Analyst,Japan,Rarely,6,3,Maybe,Integration,None,Search,21
+R091,38,Manager,China,Several/week,5,4,Maybe,Price,Missing features,Referral,12
+R092,45,Engineer,Korea,Several/week,6,4,Maybe,Accuracy,Slow,Social,9
+R093,39,Manager,USA,Rarely,8,3,Yes,API,Slow,Social,10
+R094,22,Manager,USA,Monthly,3,3,No,UI Design,None,Conference,35
+R095,57,Consultant,China,Weekly,4,4,No,Speed,None,Social,4
+R096,28,Researcher,Germany,Daily,6,4,Maybe,Accuracy,Missing features,Referral,36
+R097,48,Data Analyst,China,Weekly,10,4,Yes,Support,None,Social,35
+R098,54,Researcher,UK,Daily,6,4,Maybe,Integration,Too complex,Ad,19
+R099,62,Engineer,USA,Several/week,5,5,Maybe,Price,None,Ad,5
+R100,40,Student,China,Daily,7,4,Yes,Support,Slow,Referral,29
+R101,55,Researcher,USA,Monthly,7,5,Yes,UI Design,None,Search,9
+R102,27,Manager,China,Weekly,5,3,Maybe,Speed,Too complex,Search,31
+R103,27,Data Analyst,China,Several/week,3,5,No,UI Design,Too complex,Ad,20
+R104,30,Manager,USA,Daily,8,4,Yes,UI Design,Too complex,Search,23
+R105,56,Engineer,USA,Monthly,4,3,No,UI Design,None,Conference,12
+R106,58,Researcher,USA,Weekly,8,2,Yes,Support,None,Referral,23
+R107,41,Engineer,USA,Several/week,8,4,Yes,UI Design,Missing features,Search,1
+R108,40,Researcher,USA,Several/week,8,4,Yes,Support,Slow,Ad,20
+R109,36,Data Analyst,USA,Daily,7,3,Yes,UI Design,Slow,Conference,28
+R110,46,Researcher,China,Several/week,8,4,Yes,Speed,Slow,Social,34
+R111,39,Engineer,Japan,Monthly,9,5,Yes,Price,None,Referral,27
+R112,29,Student,USA,Daily,6,4,Maybe,Integration,Missing features,Conference,32
+R113,56,Data Analyst,China,Daily,8,4,Yes,Speed,Missing features,Referral,9
+R114,31,Data Analyst,USA,Weekly,7,4,Yes,Accuracy,Slow,Referral,32
+R115,43,Data Analyst,Singapore,Rarely,4,2,No,UI Design,Too complex,Referral,26
+R116,38,Researcher,Singapore,Daily,8,3,Yes,Speed,None,Social,25
+R117,24,Manager,USA,Monthly,6,2,Maybe,API,Too complex,Conference,14
+R118,42,Manager,Japan,Several/week,8,4,Yes,Speed,None,Conference,34
+R119,45,Data Analyst,Korea,Daily,6,3,Maybe,UI Design,Too complex,Social,28
+R120,29,Researcher,UK,Several/week,7,4,Yes,Speed,Too complex,Conference,31
+R121,37,Manager,USA,Weekly,8,4,Yes,Support,None,Referral,4
+R122,28,Manager,USA,Daily,10,3,Yes,Accuracy,None,Referral,29
+R123,30,Engineer,Korea,Weekly,4,4,No,Integration,None,Ad,36
+R124,33,Consultant,China,Daily,8,4,Yes,Support,Slow,Referral,36
+R125,38,Consultant,China,Daily,6,3,Maybe,Speed,None,Conference,25
+R126,45,Consultant,China,Weekly,6,4,Maybe,Support,Too complex,Conference,25
+R127,31,Consultant,China,Daily,6,3,Maybe,Integration,None,Referral,8
+R128,30,Manager,Korea,Daily,5,4,Maybe,UI Design,Too complex,Ad,13
+R129,53,Consultant,Japan,Daily,7,3,Yes,Price,Missing features,Search,24
+R130,35,Student,USA,Daily,6,4,Maybe,API,Too complex,Ad,4
+R131,45,Student,China,Several/week,7,4,Yes,Price,Missing features,Conference,3
+R132,35,Consultant,China,Weekly,3,4,No,Support,High price,Conference,25
+R133,62,Manager,USA,Daily,7,3,Yes,Price,Slow,Search,23
+R134,28,Manager,UK,Weekly,6,3,Maybe,Price,Slow,Conference,22
+R135,44,Engineer,USA,Weekly,5,3,Maybe,Accuracy,None,Referral,27
+R136,60,Manager,USA,Monthly,5,2,Maybe,UI Design,Slow,Conference,17
+R137,22,Student,China,Several/week,8,2,Yes,Accuracy,None,Search,34
+R138,36,Manager,Korea,Daily,9,4,Yes,Speed,None,Referral,36
+R139,28,Data Analyst,USA,Several/week,7,3,Yes,UI Design,High price,Referral,24
+R140,41,Data Analyst,USA,Monthly,5,3,Maybe,Price,High price,Search,21
+R141,58,Data Analyst,USA,Monthly,7,4,Yes,Accuracy,Too complex,Conference,25
+R142,44,Researcher,USA,Daily,10,5,Yes,API,Too complex,Social,1
+R143,55,Data Analyst,China,Weekly,8,3,Yes,Price,High price,Referral,33
+R144,47,Researcher,UK,Weekly,6,4,Maybe,Price,None,Search,15
+R145,43,Data Analyst,USA,Several/week,9,4,Yes,Support,Too complex,Conference,26
+R146,30,Manager,USA,Daily,7,3,Yes,UI Design,Slow,Ad,13
+R147,37,Data Analyst,China,Weekly,8,5,Yes,Integration,Missing features,Conference,6
+R148,34,Engineer,China,Daily,7,3,Yes,Support,Too complex,Referral,11
+R149,50,Consultant,China,Rarely,6,1,Maybe,Speed,None,Social,13
+R150,27,Data Analyst,Germany,Weekly,3,4,No,UI Design,None,Social,19
+R151,50,Researcher,China,Daily,10,4,Yes,UI Design,None,Conference,14
+R152,52,Consultant,Germany,Daily,7,3,Yes,UI Design,None,Search,25
+R153,32,Data Analyst,China,Weekly,6,3,Maybe,API,None,Conference,18
+R154,46,Student,China,Daily,7,4,Yes,API,None,Referral,7
+R155,36,Researcher,USA,Daily,7,5,Yes,Support,Too complex,Referral,32
+R156,54,Researcher,USA,Monthly,4,3,No,Support,Too complex,Search,16
+R157,32,Data Analyst,China,Rarely,5,3,Maybe,Accuracy,Missing features,Referral,16
+R158,25,Student,China,Rarely,7,4,Yes,Integration,None,Search,36
+R159,47,Student,China,Rarely,5,3,Maybe,Support,Slow,Conference,15
+R160,41,Consultant,China,Several/week,9,3,Yes,Price,High price,Social,9
+R161,30,Engineer,Japan,Weekly,6,3,Maybe,Price,High price,Ad,10
+R162,26,Consultant,USA,Weekly,5,3,Maybe,Support,Too complex,Social,21
+R163,42,Researcher,Australia,Monthly,6,4,Maybe,Accuracy,Slow,Referral,10
+R164,61,Consultant,China,Monthly,6,4,Maybe,Price,None,Social,15
+R165,52,Manager,USA,Daily,8,4,Yes,Price,Slow,Referral,12
+R166,34,Manager,China,Monthly,6,3,Maybe,API,Too complex,Referral,27
+R167,35,Data Analyst,China,Daily,8,4,Yes,Integration,None,Conference,32
+R168,49,Researcher,UK,Weekly,5,5,Maybe,Price,None,Ad,21
+R169,56,Consultant,Japan,Several/week,4,5,No,Support,None,Search,34
+R170,37,Consultant,USA,Daily,7,2,Yes,Support,Too complex,Conference,25
+R171,40,Researcher,China,Several/week,8,4,Yes,Accuracy,None,Referral,30
+R172,55,Manager,USA,Daily,7,4,Yes,Support,Slow,Search,33
+R173,56,Manager,China,Daily,10,4,Yes,Accuracy,Slow,Search,12
+R174,51,Data Analyst,China,Several/week,3,5,No,Support,None,Social,8
+R175,27,Consultant,Germany,Daily,5,4,Maybe,Support,None,Conference,11
+R176,43,Consultant,Korea,Several/week,5,3,Maybe,API,High price,Social,10
+R177,41,Student,UK,Daily,10,4,Yes,Integration,Missing features,Social,8
+R178,38,Data Analyst,USA,Monthly,4,3,No,API,Slow,Conference,1
+R179,52,Researcher,USA,Weekly,6,3,Maybe,Speed,None,Conference,1
+R180,57,Manager,China,Daily,8,3,Yes,UI Design,Too complex,Referral,3
+R181,60,Engineer,China,Daily,7,5,Yes,Speed,Too complex,Search,27
+R182,60,Consultant,UK,Rarely,6,4,Maybe,UI Design,Slow,Conference,24
+R183,45,Researcher,Singapore,Rarely,7,4,Yes,API,Slow,Conference,5
+R184,39,Engineer,USA,Daily,8,5,Yes,Price,High price,Social,4
+R185,27,Researcher,Germany,Daily,10,4,Yes,Price,None,Referral,28
+R186,61,Engineer,Korea,Weekly,4,3,No,Price,None,Ad,34
+R187,61,Manager,Germany,Weekly,9,2,Yes,UI Design,Too complex,Search,2
+R188,35,Consultant,Australia,Several/week,7,4,Yes,Integration,Too complex,Referral,23
+R189,34,Student,China,Weekly,4,4,No,API,Too complex,Referral,20
+R190,43,Engineer,China,Several/week,7,4,Yes,Price,None,Search,12
+R191,52,Researcher,UK,Daily,8,5,Yes,Support,High price,Ad,10
+R192,43,Researcher,UK,Weekly,3,4,No,Integration,None,Search,34
+R193,56,Data Analyst,China,Daily,6,4,Maybe,Support,Missing features,Referral,5
+R194,46,Student,USA,Rarely,4,3,No,UI Design,None,Conference,25
+R195,41,Student,Korea,Daily,8,5,Yes,Support,Too complex,Referral,27
+R196,41,Manager,USA,Daily,10,5,Yes,UI Design,Too complex,Referral,3
+R197,23,Researcher,Korea,Monthly,5,4,Maybe,UI Design,High price,Referral,31
+R198,31,Data Analyst,Singapore,Weekly,5,2,Maybe,Price,None,Social,14
+R199,55,Data Analyst,China,Weekly,6,2,Maybe,Speed,None,Conference,6
+R200,41,Data Analyst,USA,Several/week,8,4,Yes,Accuracy,None,Social,21

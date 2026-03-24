@@ -1,0 +1,46 @@
+# ── Credentials (NEVER commit) ──────────────────────────────────────────────
+setting.txt
+.env
+*.env
+
+# ── Runtime state (user-generated, not part of source) ──────────────────────
+data/memory.json
+data/custom_skills.json
+
+# ── Uploaded files ───────────────────────────────────────────────────────────
+uploads/
+
+# ── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# ── Virtual environments ──────────────────────────────────────────────────────
+venv/
+.venv/
+env/
+.env/
+ENV/
+
+# ── Logs & temp ───────────────────────────────────────────────────────────────
+*.log
+*.tmp
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── MkDocs build output ───────────────────────────────────────────────────────
+site/
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.iml

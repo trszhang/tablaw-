@@ -1,0 +1,86 @@
+employee_id,name,department,role,level,salary,hire_date,city,performance_score,years_at_company,gender,on_leave
+1001,Huang Min,Operations,COO,3,62500,2018-03-02,Beijing,4.1,8.0,F,False
+1002,Huang Chao,Product,PM,1,16500,2022-10-30,Chengdu,5.0,3.4,M,False
+1003,Zhou Wei,Product,Senior PM,2,29000,2024-02-24,Wuhan,3.6,2.1,F,False
+1004,Sun Kai,Finance,Finance Manager,3,36500,2021-05-29,Chengdu,3.3,4.8,M,False
+1005,Zhao Min,Marketing,Specialist,1,10000,2023-07-23,Chengdu,3.8,2.7,M,False
+1006,Zhao Jing,HR,CHRO,3,37000,2020-06-16,Shanghai,3.7,5.8,M,False
+1007,Zhang Fang,Finance,Finance Manager,3,33500,2017-06-15,Guangzhou,3.8,8.8,M,False
+1008,Li Xin,Engineering,Senior Eng,2,20500,2018-12-14,Nanjing,4.8,7.3,F,False
+1009,Ma Tao,Marketing,Specialist,1,9500,2018-07-27,Shenzhen,3.7,7.6,F,False
+1010,Zhou Ling,HR,HR Manager,2,22000,2017-12-11,Hangzhou,3.7,8.3,M,True
+1011,Ma Hao,Product,PM,1,19500,2018-06-12,Shanghai,4.6,7.8,M,False
+1012,Zhao Wei,Engineering,Junior Eng,1,12500,2021-06-06,Wuhan,4.2,4.8,M,False
+1013,Zhou Ling,Marketing,CMO,3,46000,2022-01-01,Guangzhou,3.6,4.2,M,False
+1014,Huang Tao,Data,Data Analyst,1,13000,2018-07-17,Guangzhou,3.4,7.7,F,False
+1015,Zhou Yong,Operations,COO,3,54500,2023-02-09,Chengdu,3.6,3.1,M,False
+1016,Li Yan,Engineering,Junior Eng,1,11000,2020-02-25,Nanjing,2.9,6.1,F,False
+1017,Ma Yu,Marketing,CMO,3,42500,2024-05-14,Beijing,3.5,1.8,F,False
+1018,Zhang Tao,Operations,Ops Analyst,1,13000,2018-12-13,Chengdu,4.4,7.3,M,False
+1019,Chen Kai,Engineering,Tech Lead,3,31500,2023-05-15,Nanjing,2.7,2.8,F,False
+1020,Chen Wei,Data,Data Analyst,1,12000,2023-10-01,Nanjing,3.1,2.5,M,False
+1021,Yang Wei,Marketing,CMO,3,47000,2018-12-28,Beijing,4.7,7.2,F,False
+1022,Wang Hao,Sales,Sales Manager,3,29500,2021-02-03,Wuhan,2.8,5.1,F,False
+1023,Xu Hao,Finance,Analyst,1,16000,2021-11-25,Shenzhen,4.0,4.3,F,False
+1024,Huang Jing,HR,HR Specialist,1,10500,2018-12-20,Hangzhou,1.8,7.2,F,False
+1025,Zhou Wei,Engineering,Eng Manager,4,55000,2021-05-23,Shenzhen,4.2,4.8,F,False
+1026,Zhang Hao,Marketing,Manager,2,17500,2022-07-26,Shanghai,2.5,3.6,F,False
+1027,Sun Yu,HR,HR Specialist,1,12000,2017-12-30,Chengdu,4.0,8.2,M,True
+1028,Ma Fang,Marketing,Specialist,1,9500,2019-11-18,Beijing,2.6,6.3,M,False
+1029,Huang Fang,Operations,COO,3,66000,2022-07-13,Nanjing,4.0,3.7,F,False
+1030,Liu Wei,Marketing,Specialist,1,9500,2017-05-17,Chengdu,3.1,8.8,M,False
+1031,Lin Fang,Product,PM,1,21500,2018-10-22,Chengdu,3.4,7.4,F,False
+1032,Zhang Ling,Data,Data Eng,3,26500,2024-05-01,Wuhan,2.6,1.9,F,False
+1033,Liu Rui,HR,HR Specialist,1,9000,2023-03-20,Hangzhou,3.3,3.0,M,False
+1034,Zhang Wei,Engineering,Junior Eng,1,12500,2022-07-04,Chengdu,2.4,3.7,M,False
+1035,Zhang Rui,Finance,Finance Manager,3,33000,2022-05-22,Hangzhou,3.5,3.8,M,False
+1036,Lin Rui,Product,PM,1,18000,2022-06-27,Hangzhou,3.7,3.7,M,False
+1037,Zhao Min,Operations,Ops Analyst,1,13000,2021-02-22,Hangzhou,3.6,5.1,F,False
+1038,Wang Rui,Engineering,Junior Eng,1,13500,2018-02-01,Chengdu,3.7,8.1,F,False
+1039,Zhu Yu,Marketing,Manager,2,23500,2022-11-11,Nanjing,2.7,3.3,F,False
+1040,Wu Ling,Data,Data Analyst,1,14000,2017-05-23,Shenzhen,3.9,8.8,M,False
+1041,Huang Fang,Data,Data Analyst,1,17000,2019-05-18,Wuhan,3.6,6.8,F,False
+1042,Wang Xin,Sales,Sales Manager,3,23500,2017-10-02,Wuhan,3.2,8.5,F,False
+1043,Wu Yan,Finance,Senior Analyst,2,24000,2017-02-20,Wuhan,3.7,9.1,M,False
+1044,Lin Fang,Sales,Senior Sales,2,17000,2018-02-15,Shanghai,2.5,8.1,M,False
+1045,Li Lei,HR,CHRO,3,38000,2024-05-06,Hangzhou,2.5,1.9,M,False
+1046,Sun Tao,Operations,Ops Analyst,1,13000,2020-09-19,Beijing,3.6,5.5,M,False
+1047,Zhu Chao,HR,HR Specialist,1,11500,2020-05-26,Shanghai,3.0,5.8,F,False
+1048,Zhou Rui,Data,Data Eng,3,25000,2021-09-04,Shanghai,4.7,4.5,F,False
+1049,Zhang Fang,Operations,Ops Manager,2,25000,2021-03-12,Hangzhou,3.9,5.0,F,False
+1050,Zhu Wei,Engineering,Junior Eng,1,14000,2019-04-03,Guangzhou,2.7,7.0,M,False
+1051,Wang Rui,HR,HR Manager,2,17000,2022-03-17,Beijing,2.5,4.0,F,False
+1052,Wu Hao,Data,Data Analyst,1,16500,2023-08-01,Chengdu,3.5,2.6,F,False
+1053,Zhu Ling,Finance,Senior Analyst,2,22500,2020-03-13,Guangzhou,3.7,6.0,F,False
+1054,Zhu Yan,Marketing,Specialist,1,11000,2017-03-24,Beijing,3.5,9.0,M,False
+1055,Sun Chao,Sales,Senior Sales,2,13500,2019-10-31,Hangzhou,2.2,6.4,M,False
+1056,Xu Yong,HR,HR Manager,2,16500,2020-05-22,Wuhan,2.4,5.8,F,False
+1057,Wang Hao,HR,HR Manager,2,19500,2020-03-03,Hangzhou,3.4,6.0,M,False
+1058,Liu Tao,Finance,Senior Analyst,2,24500,2024-04-22,Shenzhen,3.8,1.9,F,False
+1059,Zhang Chao,Engineering,Tech Lead,3,37000,2023-09-24,Beijing,3.0,2.5,M,False
+1060,Zhou Chao,Finance,Finance Manager,3,30000,2017-05-25,Guangzhou,3.8,8.8,M,False
+1061,Wu Jing,Marketing,Manager,2,22000,2022-05-03,Shenzhen,4.4,3.9,F,False
+1062,Ma Yu,Product,Senior PM,2,32000,2023-04-09,Shenzhen,2.9,2.9,M,False
+1063,Yang Jing,Marketing,Specialist,1,12500,2020-06-11,Hangzhou,2.2,5.8,M,False
+1064,Zhou Fang,Data,Data Analyst,1,15000,2023-07-05,Nanjing,4.2,2.7,F,False
+1065,Huang Ling,Operations,Ops Manager,2,22000,2018-09-10,Nanjing,3.8,7.5,F,False
+1066,Zhang Hao,Sales,Sales Manager,3,26000,2024-01-29,Beijing,3.9,2.1,M,False
+1067,Wang Lei,Marketing,Manager,2,18000,2018-10-11,Wuhan,2.3,7.4,M,False
+1068,Sun Hao,Data,Data Analyst,1,12000,2019-03-28,Beijing,3.6,7.0,M,False
+1069,Liu Lei,Marketing,Specialist,1,9000,2019-10-17,Shanghai,3.7,6.4,M,False
+1070,Liu Min,Finance,Analyst,1,15000,2020-05-06,Chengdu,4.9,5.9,M,False
+1071,Lin Yu,Sales,Sales Rep,1,12000,2021-01-11,Wuhan,3.5,5.2,M,False
+1072,Zhang Fang,Sales,Sales Rep,1,8500,2022-08-29,Chengdu,3.1,3.6,M,False
+1073,Xu Kai,Finance,Senior Analyst,2,21500,2023-08-30,Beijing,4.5,2.5,M,False
+1074,Zhao Chao,Operations,Ops Analyst,1,9500,2019-11-02,Shenzhen,3.5,6.4,F,False
+1075,Zhang Xin,Engineering,Junior Eng,1,13000,2022-11-02,Shanghai,3.4,3.4,F,False
+1076,Chen Ling,Product,PM,1,20500,2022-08-01,Guangzhou,4.4,3.6,M,False
+1077,Chen Chao,Marketing,Specialist,1,11000,2018-10-19,Nanjing,4.3,7.4,M,False
+1078,Xu Min,Engineering,Senior Eng,2,26500,2023-06-10,Shenzhen,3.7,2.8,M,False
+1079,Liu Jing,Product,Senior PM,2,24500,2019-11-15,Nanjing,3.0,6.3,M,False
+1080,Ma Rui,Sales,Sales Manager,3,29500,2021-01-15,Chengdu,2.9,5.2,M,False
+1081,Zhang Hao,Product,Product Director,3,50500,2017-02-09,Chengdu,4.1,9.1,M,False
+1082,Zhang Fang,Finance,Finance Manager,3,26500,2020-11-04,Wuhan,2.7,5.4,M,False
+1083,Ma Lei,Finance,Finance Manager,3,33500,2022-05-13,Shanghai,3.8,3.8,F,False
+1084,Huang Yu,Engineering,Eng Manager,4,53000,2018-03-01,Nanjing,2.5,8.0,F,False
+1085,Zhu Chao,Sales,Senior Sales,2,18500,2023-11-10,Shenzhen,4.5,2.4,M,False

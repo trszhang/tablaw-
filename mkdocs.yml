@@ -1,0 +1,79 @@
+site_name: TabClaw
+site_description: A local AI agent for conversational table analysis — no SQL, no code, no cloud.
+site_author: Shuo Yu, Daoyu Wang, Qingchuan Li
+site_url: https://agentr1.github.io/tab-claw/
+repo_url: https://github.com/fishsure/TabClaw
+repo_name: fishsure/TabClaw
+edit_uri: ""
+
+docs_dir: docs
+
+theme:
+  name: material
+  logo: assets/logo_rmbg.png
+  favicon: assets/logo_rmbg.png
+  language: en
+  palette:
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - content.code.copy
+    - content.code.annotate
+    - search.highlight
+    - search.suggest
+    - announce.dismiss
+
+nav:
+  - Home: index.md
+  - Features: features.md
+  - Architecture: architecture.md
+  - Skills Reference: skills.md
+  - Configuration: configuration.md
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/fishsure/TabClaw
+      name: TabClaw on GitHub
+
+extra_css:
+  - assets/custom.css

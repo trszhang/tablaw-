@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TabClaw — Table Intelligence Agent</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+<div id="app">
+
+  <!-- ===== HEADER ===== -->
+  <header id="header">
+    <a class="logo" href="#">
+      <div class="header-logo">
+        <img src="/asset/logo_rmbg.png" alt="TabClaw" />
+      </div>
+    </a>
+    <div id="header-actions">
+      <button class="btn icon-only" id="theme-btn" title="切换日间/夜间模式"></button>
+      <button class="btn icon-only lang-btn" id="lang-btn" title="Switch language / 切换语言">中</button>
+      <button class="btn primary" id="demo-btn" title="一键体验示例场景">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+        <span class="btn-label">一键体验</span>
+      </button>
+      <button class="btn" id="compact-chat-btn" title="Compact chat history into a summary">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/>
+          <line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/>
+        </svg>
+        <span class="btn-label">Compact</span>
+      </button>
+      <button class="btn" id="clear-chat-btn" title="Clear chat history">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6m4-6v6"/>
+        </svg>
+        <span class="btn-label">Clear Chat</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside id="sidebar">
+    <div class="sidebar-tabs">
+      <button class="sidebar-tab active" data-tab="tables">Tables</button>
+      <button class="sidebar-tab" data-tab="skills">Skills</button>
+      <button class="sidebar-tab" data-tab="memory">Memory</button>
+    </div>
+
+    <!-- Tables panel -->
+    <div class="sidebar-panel active" id="panel-tables">
+      <div class="sidebar-panel-header">
+        <span>Uploaded Tables</span>
+        <span id="table-count" class="text-muted">0</span>
+      </div>
+      <div class="sidebar-scroll" id="tables-list">
+        <!-- populated by JS -->
+      </div>
+      <div class="upload-area" id="upload-area">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
+          <path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/>
+        </svg>
+        <span id="upload-hint-main">Click or drop CSV / Excel files</span><br>
+        <span id="upload-hint-sub" style="font-size:10px;color:var(--text-dim)">Multiple files supported</span>
+      </div>
+      <input type="file" id="file-input" accept=".csv,.xlsx,.xls" multiple style="display:none" />
+    </div>
+
+    <!-- Skills panel -->
+    <div class="sidebar-panel" id="panel-skills">
+      <div class="sidebar-panel-header">
+        <span>Skills</span>
+        <div style="display:flex;gap:4px">
+          <button class="btn sm danger" id="clear-skills-btn" title="Clear all custom skills">🗑 Clear</button>
+          <button class="btn sm primary" id="add-skill-btn">+ Add</button>
+        </div>
+      </div>
+      <div class="sidebar-scroll" id="skills-list">
+        <!-- populated by JS -->
+      </div>
+    </div>
+
+    <!-- Memory panel -->
+    <div class="sidebar-panel" id="panel-memory">
+      <div class="sidebar-panel-header">
+        <span>Memory</span>
+        <div style="display:flex;gap:4px">
+          <button class="btn sm" id="memory-overview-btn" title="Generate user preference overview">📄 Overview</button>
+          <button class="btn sm danger" id="clear-memory-btn" title="Clear all memory">🗑 Clear</button>
+          <button class="btn sm primary" id="add-memory-btn">+ Add</button>
+        </div>
+      </div>
+      <div class="sidebar-scroll" id="memory-list" style="flex:1">
+        <!-- populated by JS -->
+      </div>
+      <div class="forget-bar">
+        <input type="text" id="forget-input" placeholder='Forget: "my language preference"…' />
+        <button class="btn sm danger" id="forget-btn">Forget</button>
+      </div>
+    </div>
+    <div class="lab-credit" id="lab-credit">中国科学技术大学认知智能全国重点实验室 AGI 组</div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <main id="main">
+    <div id="chat-messages">
+      <div id="chat-empty">
+        <div class="brand-logo-wrap">
+          <img src="/asset/logo_rmbg.png" alt="TabClaw" class="brand-logo" />
+        </div>
+        <p>Upload tables from the sidebar, then ask questions or request operations on your data.</p>
+        <div class="suggestion-chips">
+          <div class="chip" onclick="app.insertSuggestion(this)">Summarize all uploaded tables</div>
+          <div class="chip" onclick="app.insertSuggestion(this)">Find rows where value is null</div>
+          <div class="chip" onclick="app.insertSuggestion(this)">Merge tables on a common column</div>
+          <div class="chip" onclick="app.insertSuggestion(this)">Show top 10 rows sorted by first numeric column</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Demo progress control bar (hidden unless demo is running) -->
+    <div id="demo-control" class="hidden">
+      <div class="demo-control-inner">
+        <div class="demo-progress-dots"><span></span><span></span><span></span></div>
+        <span>演示进行中：</span>
+        <span class="demo-control-title" id="demo-control-title"></span>
+        <span class="demo-control-step" id="demo-control-step"></span>
+        <div class="demo-control-spacer"></div>
+        <button class="btn sm danger" id="demo-stop-btn">⏹ 停止演示</button>
+      </div>
+    </div>
+
+    <div id="input-area">
+      <div class="input-toolbar">
+        <label class="plan-mode-toggle" title="When ON, a reviewable plan is generated before execution">
+          <input type="checkbox" id="plan-mode-check" checked />
+          <span class="toggle-track"></span>
+          <span id="plan-mode-label-text">Plan Mode</span>
+        </label>
+        <span id="plan-mode-hint-span" style="color:var(--text-dim);font-size:11px;">— review steps before execution</span>
+        <div class="toolbar-sep"></div>
+        <label class="plan-mode-toggle code-tool-toggle" title="Let the model write and run sandboxed Python code for complex operations">
+          <input type="checkbox" id="code-tool-check" />
+          <span class="toggle-track code-track"></span>
+          <span id="code-tool-label-text">Code Tool</span>
+        </label>
+        <span id="code-tool-hint-span" style="color:var(--text-dim);font-size:11px;">— Python sandbox</span>
+        <div class="toolbar-sep"></div>
+        <label class="plan-mode-toggle" title="Automatically distil reusable skills after each completed task">
+          <input type="checkbox" id="skill-learn-check" />
+          <span class="toggle-track"></span>
+          <span id="skill-learn-label-text">Skill Learning</span>
+        </label>
+        <span id="skill-learn-hint-span" style="color:var(--text-dim);font-size:11px;">— auto off</span>
+      </div>
+      <div class="input-row">
+        <textarea id="message-input" placeholder="Ask a question or give an instruction about your tables…" rows="1"></textarea>
+        <button id="send-btn" title="Send (Enter)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ===== MODALS ===== -->
+
+<!-- Plan editor modal -->
+<div id="plan-modal" class="modal-overlay hidden">
+  <div class="modal plan-modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">📋 Execution Plan</div>
+        <div class="modal-subtitle" id="plan-modal-subtitle">Review and edit steps before execution</div>
+      </div>
+      <button class="modal-close" onclick="app.hidePlanModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="plan-steps-container"><!-- steps injected here --></div>
+      <button class="btn" id="add-plan-step-btn" style="width:100%;justify-content:center;margin-top:4px">
+        + Add Step
+      </button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" id="plan-cancel-btn" onclick="app.hidePlanModal()">Cancel</button>
+      <button class="btn primary" id="execute-plan-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+        <span class="btn-label">Execute Plan</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Table view modal -->
+<div id="table-modal" class="modal-overlay hidden">
+  <div class="modal table-modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="table-modal-title">Table</div>
+        <div class="modal-subtitle" id="table-modal-meta"></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn sm" id="table-modal-prev">‹ Prev</button>
+        <span id="table-modal-page" style="font-size:12px;color:var(--text-muted)">Page 1</span>
+        <button class="btn sm" id="table-modal-next">Next ›</button>
+        <button class="btn sm primary" id="table-modal-download">⬇ CSV</button>
+        <button class="modal-close" onclick="app.hideTableModal()">×</button>
+      </div>
+    </div>
+    <div class="modal-body" style="padding:0">
+      <div class="table-scroll" id="table-modal-content" style="max-height:calc(85vh - 80px)">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add / Edit skill modal -->
+<div id="skill-modal" class="modal-overlay hidden">
+  <div class="modal" style="width:560px">
+    <div class="modal-header">
+      <div class="modal-title" id="skill-modal-title">Add Custom Skill</div>
+      <button class="modal-close" onclick="app.hideSkillModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Skill Name (no spaces)</label>
+        <input class="form-input" id="skill-name-input" placeholder="e.g. analyze_sales" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <input class="form-input" id="skill-desc-input" placeholder="What this skill does (shown to the model)" />
+      </div>
+      <!-- Mode toggle -->
+      <div class="skill-mode-toggle-row">
+        <span class="form-label" style="margin:0">Mode</span>
+        <div class="skill-mode-tabs">
+          <button class="skill-mode-tab active" id="skill-tab-prompt" onclick="app._switchSkillMode('prompt')">
+            💬 Prompt
+          </button>
+          <button class="skill-mode-tab" id="skill-tab-code" onclick="app._switchSkillMode('code')">
+            🐍 Python Code
+          </button>
+        </div>
+      </div>
+      <!-- Prompt panel -->
+      <div id="skill-panel-prompt" class="form-group">
+        <label class="form-label" style="margin-bottom:4px">System Prompt / Instructions</label>
+        <p class="form-hint">Describe what the LLM should do. Placeholders: <code>{table_name}</code>, <code>{user_request}</code>. A 30-row table preview is attached automatically.</p>
+        <textarea class="form-textarea" id="skill-prompt-input" rows="6"
+          placeholder="You are a sales analysis expert. Analyze the table {table_name} and {user_request}. Focus on revenue trends, top products, and regional performance. Be concise."></textarea>
+      </div>
+      <!-- Code panel (hidden by default) -->
+      <div id="skill-panel-code" class="form-group hidden">
+        <label class="form-label" style="margin-bottom:4px">Python Code</label>
+        <p class="form-hint">Write pandas code. Tables are available by ID or name. Assign a DataFrame to <code>result</code> to produce a new table. Runs in the same sandbox as Code Tool.</p>
+        <textarea class="form-textarea form-code-input" id="skill-code-input" rows="10"
+          placeholder="# Example: compute profit margin per region&#10;result = sales_2023.groupby('region').agg(&#10;    revenue=('revenue', 'sum'),&#10;    profit=('profit', 'sum')&#10;).assign(margin=lambda d: d.profit / d.revenue).reset_index()"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="app.hideSkillModal()">Cancel</button>
+      <button class="btn primary" id="skill-save-btn">Save Skill</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add / Edit memory modal -->
+<div id="memory-modal" class="modal-overlay hidden">
+  <div class="modal" style="width:480px">
+    <div class="modal-header">
+      <div class="modal-title" id="memory-modal-title">Add Memory</div>
+      <button class="modal-close" onclick="app.hideMemoryModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select class="form-select" id="mem-cat-input">
+          <option value="preferences">Preferences</option>
+          <option value="domain_knowledge">Domain Knowledge</option>
+          <option value="user_context">User Context</option>
+          <option value="history_insights">History Insights</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Key</label>
+        <input class="form-input" id="mem-key-input" placeholder="e.g. output_format" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Value</label>
+        <textarea class="form-textarea" id="mem-val-input" rows="3" placeholder="e.g. Always show results as detailed tables with explanations"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="app.hideMemoryModal()">Cancel</button>
+      <button class="btn primary" id="memory-save-btn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Notifications -->
+<div id="notifications"></div>
+
+<!-- ===== DEMO MODAL ===== -->
+<div id="demo-modal" class="modal-overlay hidden">
+  <div class="modal demo-modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">🎯 一键体验</div>
+        <div class="modal-subtitle">选择一个场景，系统自动加载数据并逐步执行完整分析流程</div>
+      </div>
+      <button class="modal-close" onclick="app.hideDemoModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="demo-scenarios-grid" class="demo-grid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Memory overview / summary modal -->
+<div id="memory-summary-modal" class="modal-overlay hidden">
+  <div class="modal memory-summary-modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">👤 用户偏好概览</div>
+        <div class="modal-subtitle" id="memory-summary-subtitle">由 AI 根据当前记忆整理生成</div>
+      </div>
+      <button class="modal-close" onclick="app.hideMemorySummaryModal()">×</button>
+    </div>
+    <div class="modal-body" id="memory-summary-body">
+      <div class="memory-summary-loading hidden" id="memory-summary-loading">
+        <div class="thinking-dots"><span></span><span></span><span></span></div>
+        <span>正在整理中…</span>
+      </div>
+      <div id="memory-summary-content" class="memory-summary-content msg-bubble"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" id="memory-summary-copy-btn">📋 Copy</button>
+      <button class="btn" onclick="app.hideMemorySummaryModal()">Close</button>
+      <button class="btn primary" id="memory-summary-refresh-btn">↻ Regenerate</button>
+    </div>
+  </div>
+</div>
+
+<!-- Skill detail modal (read-only, for built-in skills) -->
+<div id="skill-detail-modal" class="modal-overlay hidden">
+  <div class="modal" style="width:560px">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="skill-detail-name"></div>
+        <div class="modal-subtitle" id="skill-detail-category"></div>
+      </div>
+      <button class="modal-close" onclick="app.hideSkillDetailModal()">×</button>
+    </div>
+    <div class="modal-body" id="skill-detail-body">
+      <!-- populated by JS -->
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="app.hideSkillDetailModal()">Close</button>
+      <button class="btn primary" id="skill-detail-use-btn">Use as Template</button>
+    </div>
+  </div>
+</div>
+
+<script src="/static/marked.min.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>

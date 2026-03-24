@@ -1,0 +1,14 @@
+# TabClaw Configuration
+# Copy this file to setting.txt and fill in your values.
+# setting.txt is listed in .gitignore and will NOT be committed.
+
+# Your LLM API key
+API_KEY=your_api_key_here
+
+# API base URL (OpenAI-compatible endpoint)
+# Examples:
+#   OpenAI:       https://api.openai.com/v1
+#   DeepSeek:     https://api.deepseek.com/v1
+#   SiliconFlow:  https://api.siliconflow.cn/v1
+#   Ollama:       http://localhost:11434/v1
+BASE_URL=https://api.openai.com/v1
