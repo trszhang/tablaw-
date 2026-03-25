@@ -256,6 +256,12 @@ class AgentExecutor:
 
                     result = await self._exec_skill(skill_name, params, tables, result_tables_store)
 
+                    # Zero-row breaker: stop ReAct loop immediately
+                    if self._is_zero_row_breaker_result(result):
+                        blocker_msg = self._get_zero_row_breaker_message(result)
+                        yield {"type": "final_text", "content": blocker_msg}
+                        return
+
                     # Record generated tables for end-of-run commit decisions.
                     if isinstance(result, dict) and "table" in result and generated_tables is not None:
                         generated_tables.append(result["table"])
@@ -373,6 +379,15 @@ class AgentExecutor:
         markers = ("⛔", "Error in skill", "Traceback", "Exception")
         return any(marker in result_text for marker in markers)
 
+    def _is_zero_row_breaker_result(self, result: Any) -> bool:
+        return isinstance(result, dict) and bool(result.get("zero_row_breaker"))
+
+    def _get_zero_row_breaker_message(self, result: Dict[str, Any]) -> str:
+        return (
+            result.get("text")
+            or "根据您的条件，未在数据集中过滤到任何符合的数据。请检查账期或名称是否准确。"
+        )
+
     def _extract_clean_fact(self, skill_name: str, result: Any, result_text: str) -> Dict[str, Any]:
         if not isinstance(result, dict):
             text = " ".join(result_text.strip().split())
@@ -481,6 +496,10 @@ class AgentExecutor:
 - 在任何计算、聚合或过滤前，必须先做列类型检查。
 - 对包含空值或数字字符串的 Object 列，必须使用 `pd.to_numeric(errors='coerce')` 并结合 `fillna()` 清洗。
 - 对日期列，优先使用 `pd.to_datetime(..., errors='coerce')` 标准化，再继续分析。
+- CRITICAL RULE FOR FILTERING: 在进行任何基于时间或账期的过滤前，必须先查看传入的 Data Schema。如果用户意图（如'2025年8月'）与 Schema 中的格式（如整数 202508 或带横杠的 '2025-08'）不一致，你必须在生成的 Pandas 代码中，优先使用 str.replace、正则提取或 pd.to_datetime 进行格式对齐，然后再执行 .loc 或 == 过滤。绝不允许用中文格式直接匹配数字列。
+- CRITICAL RULE FOR TIME FILTERING: 当你需要根据用户要求的时间（例如'2025年8月'）对数据进行过滤时，必须仔细检查 Data Schema 中的列名标签。
+  - 绝不允许使用带有 `[⚠️系统元数据]` 标签的列（如数据更新时间、导出时间）作为过滤条件。
+  - 必须寻找并使用带有 `[🎯核心业务时间维度]` 标签的列（如账期）。如果用户没有明确说明时间列名，默认使用'账期'作为时间维度进行操作。
 """
 
         return with_zh_cn_rule(f"""You are **TabClaw**, an expert AI assistant for table analysis and data manipulation.
@@ -564,6 +583,8 @@ Rules:
                         "total_rows": len(df),
                     },
                 }
+            if isinstance(result, dict):
+                return result
             return {"text": str(result)}
         except Exception as e:
             return {"text": f"Error in skill `{skill_name}`: {e}"}

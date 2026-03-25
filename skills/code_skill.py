@@ -90,6 +90,36 @@ _SAFE_BUILTINS: Dict[str, Any] = {
 
 _EXECUTION_TIMEOUT = 30  # seconds
 
+_SYSTEM_TIME_KEYWORDS = [
+    "更新时间",
+    "导出时间",
+    "创建时间",
+    "修改时间",
+    "update_time",
+    "export_time",
+    "create_time",
+]
+
+_BUSINESS_TIME_KEYWORDS = [
+    "账期",
+    "结算期",
+    "业务日期",
+    "billing_cycle",
+    "账单月",
+]
+
+
+def _semantic_tag_for_column(column_name: Any) -> str:
+    """Return semantic tag for time-related columns."""
+    normalized = str(column_name).strip()
+    normalized_lower = normalized.lower()
+
+    if any(keyword in normalized_lower for keyword in _SYSTEM_TIME_KEYWORDS):
+        return "[⚠️系统元数据：绝对禁止用于业务时间过滤或聚合]"
+    if any(keyword in normalized_lower for keyword in _BUSINESS_TIME_KEYWORDS):
+        return "[🎯核心业务时间维度：请优先使用此列进行时间过滤]"
+    return ""
+
 
 def get_dataframe_schema(df: pd.DataFrame) -> Dict[str, Dict[str, Any]]:
     """Extract lightweight schema facts for safer code generation."""
@@ -103,6 +133,7 @@ def get_dataframe_schema(df: pd.DataFrame) -> Dict[str, Dict[str, Any]]:
             "dtype": str(series.dtype),
             "missing_ratio": round(float(series.isna().sum()) / total_rows, 4),
             "object_samples": samples if str(series.dtype) == "object" else [],
+            "semantic_tag": _semantic_tag_for_column(col),
         }
     return schema
 
@@ -121,8 +152,10 @@ def build_tables_schema_context(tables: Dict[str, Dict[str, Any]]) -> str:
             ratio = meta["missing_ratio"] * 100
             samples = meta["object_samples"]
             sample_text = f", Object样例={samples}" if samples else ""
+            semantic_tag = meta.get("semantic_tag", "")
+            display_col = f"{col} {semantic_tag}".rstrip()
             lines.append(
-                f"  - 列 `{col}`: dtype={meta['dtype']}, 缺失率={ratio:.2f}%{sample_text}"
+                f"  - 列 `{display_col}`: dtype={meta['dtype']}, 缺失率={ratio:.2f}%{sample_text}"
             )
     return "\n".join(lines)
 
@@ -273,6 +306,16 @@ def execute_python(params: Dict, tables: Dict) -> Any:
     # Return result DataFrame if the user assigned one
     result_val = namespace.get("result")
     if isinstance(result_val, pd.DataFrame):
+        # Zero-row circuit breaker: if filtering produced an empty DataFrame,
+        # stop immediately and report back instead of letting Agent hallucinate.
+        if len(result_val) == 0 and _is_filter_code(code):
+            return {
+                "text": (
+                    "⚠️ 过滤结果为 0 行：根据您的条件，未在数据集中过滤到任何符合的数据。"
+                    "请检查账期、日期格式或筛选名称是否与原始数据一致。"
+                ),
+                "zero_row_breaker": True,
+            }
         return {
             "df": result_val,
             "name": result_name,
@@ -286,3 +329,13 @@ def execute_python(params: Dict, tables: Dict) -> Any:
         "text": output_text
         or "(code ran with no output — assign a DataFrame to 'result' to create a table)"
     }
+
+
+def _is_filter_code(code: str) -> bool:
+    """Heuristic: does the code look like a filter/select/query operation?"""
+    filter_markers = [
+        ".query(", ".loc[", ".iloc[", "==", "!=", ">=", "<=",
+        ".filter(", ".isin(", ".str.contains(", ".between(",
+        "筛选", "过滤", "filter",
+    ]
+    return any(marker in code for marker in filter_markers)
