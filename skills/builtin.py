@@ -3,7 +3,7 @@ import json
 import re
 import pandas as pd
 import numpy as np
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 
 def _get_table(tables: Dict, table_id: str) -> pd.DataFrame:
@@ -15,6 +15,64 @@ def _get_table(tables: Dict, table_id: str) -> pd.DataFrame:
 
 def _safe_name(tables: Dict, result_name: str, default: str) -> str:
     return result_name if result_name else default
+
+
+_PERIOD_EQ_RE = re.compile(
+    r"^\s*`?(?P<col>[^`=]+?)`?\s*==\s*(?P<val>'[^']*'|\"[^\"]*\"|\d+)\s*$"
+)
+_YYYYMM_TOKEN_RE = re.compile(r"((?:19|20)\d{2}(?:0[1-9]|1[0-2]))")
+
+
+def _normalize_period_literal(text: str) -> str:
+    """Normalize period literals such as 2025-08 / 2025年8月 to YYYYMM."""
+    if text is None:
+        return ""
+    raw = str(text).strip().strip("'").strip('"')
+    digits = re.sub(r"\D", "", raw)
+    if len(digits) == 6 and _YYYYMM_TOKEN_RE.fullmatch(digits):
+        return digits
+    if len(digits) >= 5:
+        # Support 2025年8月 -> 20258, pad month to 2 digits.
+        year = digits[:4]
+        month = digits[4:6] if len(digits) >= 6 else digits[4:5].zfill(2)
+        candidate = f"{year}{month}"
+        if _YYYYMM_TOKEN_RE.fullmatch(candidate):
+            return candidate
+    return ""
+
+
+def _series_to_yyyymm(series: pd.Series) -> pd.Series:
+    """Extract canonical YYYYMM token from mixed-type period-like values."""
+    as_text = (
+        series.astype("string")
+        .str.strip()
+        .str.replace(r"\.0+$", "", regex=True)
+    )
+    return as_text.str.extract(_YYYYMM_TOKEN_RE, expand=False)
+
+
+def _try_period_equality_filter(df: pd.DataFrame, condition: str) -> Optional[pd.DataFrame]:
+    """
+    Defensive period filtering for expressions like:
+      账期 == '2025-08'
+      账期 == '2025年8月'
+      账期 == 202508
+    """
+    m = _PERIOD_EQ_RE.match(condition)
+    if not m:
+        return None
+    col = m.group("col").strip()
+    raw_val = m.group("val").strip()
+    if col not in df.columns:
+        return None
+
+    target = _normalize_period_literal(raw_val)
+    if not target:
+        return None
+
+    normalized_col = _series_to_yyyymm(df[col])
+    mask = normalized_col == target
+    return df[mask.fillna(False)]
 
 
 # -----------------------------------------------------------------------
@@ -44,7 +102,11 @@ def filter_rows(params: Dict, tables: Dict) -> Dict:
     condition = params["condition"]
     result_name = params.get("result_name", f"filtered_{tables[tid]['name']}")
     df = _get_table(tables, tid)
-    result = df.query(condition, engine="python")
+    defensive_result = _try_period_equality_filter(df, condition)
+    if defensive_result is not None:
+        result = defensive_result
+    else:
+        result = df.query(condition, engine="python")
     return {"df": result, "name": result_name}
 
 

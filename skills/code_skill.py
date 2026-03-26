@@ -121,18 +121,35 @@ def _semantic_tag_for_column(column_name: Any) -> str:
     return ""
 
 
+def _random_non_null_unique_samples(series: pd.Series, n: int = 5) -> List[str]:
+    """Return random unique non-null samples for realistic schema inspection."""
+    non_null = series.dropna()
+    if non_null.empty:
+        return []
+
+    unique_values = pd.Series(non_null.astype(str).str.strip().unique())
+    if unique_values.empty:
+        return []
+
+    sample_size = min(n, len(unique_values))
+    if len(unique_values) > sample_size:
+        sampled = unique_values.sample(n=sample_size, random_state=42)
+    else:
+        sampled = unique_values
+    return [str(v)[:120] for v in sampled.tolist()]
+
+
 def get_dataframe_schema(df: pd.DataFrame) -> Dict[str, Dict[str, Any]]:
     """Extract lightweight schema facts for safer code generation."""
     total_rows = max(len(df), 1)
     schema: Dict[str, Dict[str, Any]] = {}
     for col in df.columns:
         series = df[col]
-        non_null = series.dropna()
-        samples = [str(v)[:120] for v in non_null.head(3).tolist()]
+        samples = _random_non_null_unique_samples(series, n=5)
         schema[str(col)] = {
             "dtype": str(series.dtype),
             "missing_ratio": round(float(series.isna().sum()) / total_rows, 4),
-            "object_samples": samples if str(series.dtype) == "object" else [],
+            "random_unique_samples": samples,
             "semantic_tag": _semantic_tag_for_column(col),
         }
     return schema
@@ -150,8 +167,8 @@ def build_tables_schema_context(tables: Dict[str, Dict[str, Any]]) -> str:
         schema = get_dataframe_schema(df)
         for col, meta in schema.items():
             ratio = meta["missing_ratio"] * 100
-            samples = meta["object_samples"]
-            sample_text = f", Object样例={samples}" if samples else ""
+            samples = meta["random_unique_samples"]
+            sample_text = f", 随机非空唯一样本={samples}" if samples else ", 随机非空唯一样本=[]"
             semantic_tag = meta.get("semantic_tag", "")
             display_col = f"{col} {semantic_tag}".rstrip()
             lines.append(
@@ -203,6 +220,58 @@ def _check_safety(code: str) -> List[str]:
     return checker.violations
 
 
+_YYYYMM_LITERAL_RE = re.compile(r"\b(?:19|20)\d{2}(?:0[1-9]|1[0-2])\b")
+_TIME_GUARD_KEYWORDS = (
+    "账期", "年月", "会计期间", "期间", "billing_cycle", "period", "yyyymm",
+)
+
+
+def _uses_yyyymm_context(text: str) -> bool:
+    lower = text.lower()
+    if _YYYYMM_LITERAL_RE.search(text):
+        return True
+    return any(k in lower for k in _TIME_GUARD_KEYWORDS)
+
+
+def _check_datetime_guardrails(code: str) -> List[str]:
+    """
+    Block risky datetime coercion for YYYYMM-like filters.
+    If pandas.to_datetime is used in a YYYYMM/business-period context, require
+    explicit format='%Y%m' to avoid implicit parsing bugs.
+    """
+    try:
+        tree = ast.parse(code)
+    except SyntaxError:
+        return []
+
+    if not _uses_yyyymm_context(code):
+        return []
+
+    violations: List[str] = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        if not isinstance(node.func, ast.Attribute):
+            continue
+        if node.func.attr != "to_datetime":
+            continue
+        if not isinstance(node.func.value, ast.Name):
+            continue
+        if node.func.value.id not in ("pd", "pandas"):
+            continue
+
+        has_format = any(kw.arg == "format" for kw in node.keywords if kw.arg)
+        if has_format:
+            continue
+
+        violations.append(
+            "Detected `pd.to_datetime(...)` without explicit `format` in a YYYYMM/business-period context. "
+            "Use explicit parsing (e.g. `pd.to_datetime(col, format='%Y%m', errors='coerce')`) "
+            "or filter with `astype(str)` directly."
+        )
+    return violations
+
+
 # ---------------------------------------------------------------------------
 # Skill entry point
 # ---------------------------------------------------------------------------
@@ -220,6 +289,7 @@ def execute_python(params: Dict, tables: Dict) -> Any:
 
     # -- Safety gate --
     violations = _check_safety(code)
+    violations.extend(_check_datetime_guardrails(code))
     if violations:
         msg = "⛔ Code blocked by safety check:\n" + "\n".join(
             f"  • {v}" for v in violations

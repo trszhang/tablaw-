@@ -6,10 +6,69 @@ from typing import Dict, List, Any
 from skills.builtin import BUILTIN_SKILLS
 from skills.code_skill import execute_python
 
+# --- [新增导入] ---
+from infrastructure.database_manager import DatabaseManager
+from infrastructure.config import config
+from skills.text_to_sql_skill import TextToSQLSkill
+# ------------------
+
 DATA_PATH = Path(__file__).parent.parent / "data" / "custom_skills.json"
+
+
+class _TextToSQLLLMAdapter:
+    """Sync adapter that exposes generate_text for TextToSQLSkill."""
+
+    def __init__(self):
+        from openai import OpenAI
+
+        self._client = OpenAI(
+            api_key=getattr(config, "LLM_API_KEY", ""),
+            base_url=getattr(config, "LLM_BASE_URL", "https://api.openai.com/v1"),
+        )
+        self._model = getattr(config, "LLM_MODEL_NAME", "gpt-4o")
+        self._temperature = float(getattr(config, "LLM_TEMPERATURE", 0.1))
+
+    def generate_text(self, system_prompt: str, user_prompt: str) -> str:
+        resp = self._client.chat.completions.create(
+            model=self._model,
+            temperature=self._temperature,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+        )
+        return (resp.choices[0].message.content or "").strip()
+
+# 初始化全局的 Text-to-SQL 技能实例
+try:
+    _db_manager = DatabaseManager(getattr(config, 'DATABASE_URL', 'sqlite:///:memory:'))
+    _text_to_sql_skill = TextToSQLSkill(_db_manager, _TextToSQLLLMAdapter())
+    _SQL_SKILL_READY = True
+except Exception as e:
+    print(f"Warning: Failed to initialize TextToSQLSkill in registry: {e}")
+    _SQL_SKILL_READY = False
 
 # OpenAI-format tool definitions for every built-in skill
 BUILTIN_TOOL_DEFS = [
+    # --- [新增：Text-to-SQL 技能定义 (必须加在最前面，确保它被识别)] ---
+    {
+        "type": "function",
+        "function": {
+            "name": "text_to_sql",
+            "description": "Convert natural language to SQL and execute it against the enterprise database to retrieve macro business facts, trends, or when the user mentions databases/systems. Returns aggregate data.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "user_query": {
+                        "type": "string",
+                        "description": "The natural language query translated into the intent for the database search."
+                    }
+                },
+                "required": ["user_query"],
+            },
+        },
+    },
+    # -------------------------------------------------------------
     {
         "type": "function",
         "function": {
@@ -313,6 +372,9 @@ BUILTIN_TOOL_DEFS = [
 ]
 
 BUILTIN_META = {
+    # --- [新增 META 记录] ---
+    "text_to_sql": {"description": "Query enterprise database directly via natural language.", "category": "database"},
+    # ------------------------
     "table_info": {"description": "Get table metadata (shape, columns, dtypes, sample)", "category": "inspection"},
     "filter_rows": {"description": "Filter rows using a query condition", "category": "transformation"},
     "select_columns": {"description": "Select a subset of columns", "category": "transformation"},
@@ -412,9 +474,10 @@ class SkillRegistry:
     def get_tool_definitions(self, code_tool: bool = False) -> List[Dict]:
         """Return OpenAI-format tool definitions for all enabled skills."""
         if code_tool:
-            # Only keep table_info for structure inspection; execute_python handles everything else
+            # When in code_tool mode, we inject text_to_sql alongside table_info and execute_python
             table_info_def = next(d for d in BUILTIN_TOOL_DEFS if d["function"]["name"] == "table_info")
-            defs = [table_info_def, CODE_TOOL_DEF]
+            sql_def = next(d for d in BUILTIN_TOOL_DEFS if d["function"]["name"] == "text_to_sql")
+            defs = [sql_def, table_info_def, CODE_TOOL_DEF]
         else:
             defs = list(BUILTIN_TOOL_DEFS)
 
@@ -468,8 +531,20 @@ class SkillRegistry:
 
     def execute_sync(self, skill_name: str, params: Dict, tables: Dict) -> Any:
         """Execute a built-in or code skill synchronously."""
+        
+        # --- [新增执行路由：拦截并执行 text_to_sql] ---
+        if skill_name == "text_to_sql":
+            if not _SQL_SKILL_READY:
+                return {"text": "Error: Text-to-SQL Skill is not initialized properly. Check database connection."}
+            # 调用我们在 text_to_sql_skill.py 里写的核心逻辑
+            # 注意：如果你的 _text_to_sql_skill.execute 需要 llm，我们在那里面应该通过导入 llm_client 解决了
+            query = params.get("user_query", "")
+            return _text_to_sql_skill.execute(query)
+        # ---------------------------------------------
+        
         if skill_name == "execute_python":
             return execute_python(params, tables)
+            
         if skill_name not in BUILTIN_SKILLS:
             raise ValueError(f"Unknown skill '{skill_name}'")
         return BUILTIN_SKILLS[skill_name](params, tables)

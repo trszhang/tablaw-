@@ -2,6 +2,7 @@ import io
 import json
 import uuid
 import asyncio
+import re
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 
@@ -19,6 +20,11 @@ from agent.memory import MemoryManager
 from agent.multi_agent import MultiAgentExecutor
 from agent.prompt_locale import with_zh_cn_rule
 from skills.registry import SkillRegistry
+from config import API_KEY, BASE_URL, DEFAULT_MODEL
+from agent.llm import LLMClient
+from agent.executor import AgentExecutor
+
+
 
 # ---------------------------------------------------------------------------
 # App & component setup
@@ -47,6 +53,45 @@ def _build_runtime_tables_snapshot(base_tables: Dict[str, Dict]) -> Dict[str, Di
         snapshot[tid] = dict(t)
     return snapshot
 
+
+_YYYYMM_RE = re.compile(r"^(19|20)\d{2}(0[1-9]|1[0-2])$")
+
+
+def _coerce_yyyymm_like_columns(df: pd.DataFrame, threshold: float = 0.9) -> pd.DataFrame:
+    """Force YYYYMM-like columns to object strings to avoid type-mismatch filters."""
+    out = df.copy()
+    for col in out.columns:
+        series = out[col]
+        non_null = series.dropna()
+        if non_null.empty:
+            continue
+
+        as_text = (
+            non_null.astype(str)
+            .str.strip()
+            .str.replace(r"\.0+$", "", regex=True)
+        )
+        match_ratio = float(as_text.map(lambda v: bool(_YYYYMM_RE.match(v))).mean())
+        if match_ratio > threshold:
+            coerced = (
+                series.astype("string")
+                .str.strip()
+                .str.replace(r"\.0+$", "", regex=True)
+            )
+            out[col] = coerced.astype("object")
+    return out
+
+
+def _read_dataframe_with_safeguard(content: bytes, filename: str) -> pd.DataFrame:
+    lower_name = filename.lower()
+    if lower_name.endswith(".csv"):
+        df = pd.read_csv(io.BytesIO(content))
+    elif lower_name.endswith((".xlsx", ".xls")):
+        df = pd.read_excel(io.BytesIO(content))
+    else:
+        raise HTTPException(400, "Only CSV and Excel (.xlsx/.xls) files are supported")
+    return _coerce_yyyymm_like_columns(df)
+
 # Static files
 STATIC_DIR = Path(__file__).parent / "static"
 ASSET_DIR = Path(__file__).parent / "asset"
@@ -68,12 +113,7 @@ async def upload_table(file: UploadFile = File(...)):
     content = await file.read()
     fname = file.filename or "table"
     try:
-        if fname.endswith(".csv"):
-            df = pd.read_csv(io.BytesIO(content))
-        elif fname.endswith((".xlsx", ".xls")):
-            df = pd.read_excel(io.BytesIO(content))
-        else:
-            raise HTTPException(400, "Only CSV and Excel (.xlsx/.xls) files are supported")
+        df = _read_dataframe_with_safeguard(content, fname)
     except HTTPException:
         raise
     except Exception as e:
@@ -479,6 +519,7 @@ async def demo_load(body: DemoLoadBody):
             continue
         try:
             df = pd.read_csv(path)
+            df = _coerce_yyyymm_like_columns(df)
             table_id = uuid.uuid4().hex[:8]
             name = filename.rsplit(".", 1)[0]
             tables[table_id] = {

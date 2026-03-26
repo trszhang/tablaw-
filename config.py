@@ -5,7 +5,8 @@ def load_settings():
     settings_path = Path(__file__).parent / "setting.txt"
     settings = {}
     if settings_path.exists():
-        with open(settings_path) as f:
+        # Always read settings as UTF-8 to avoid Windows locale decode issues.
+        with open(settings_path, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if "=" in line and not line.startswith("#"):
