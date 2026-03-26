@@ -79,6 +79,12 @@ class AgentExecutor:
         tool_calls_log: List[Dict] = []
         generated_tables: List[Dict] = []
         reflect_final_text = ""
+        original_table_id = self._infer_original_table_id(steps, tables)
+        current_active_table_id = original_table_id
+        plan_state = {
+            "original_table_id": original_table_id,
+            "current_active_table_id": current_active_table_id,
+        }
 
         for i, step in enumerate(steps):
             desc = step.get("description", f"Step {i+1}")
@@ -97,6 +103,7 @@ class AgentExecutor:
                 generated_tables=generated_tables,
                 commit_final_table=False,
                 user_message=message,
+                plan_state=plan_state,
             ):
                 yield event
                 if event["type"] == "tool_call":
@@ -105,6 +112,8 @@ class AgentExecutor:
                     tool_calls_log[-1]["result"] = event.get("text", "")[:200]
                 elif event["type"] == "final_text":
                     final_text = event["content"]
+
+            current_active_table_id = plan_state.get("current_active_table_id", current_active_table_id)
 
             # Add step result to running conversation for context chaining
             conversation.append({"role": "user", "content": step_msg})
@@ -133,6 +142,7 @@ class AgentExecutor:
             generated_tables=generated_tables,
             commit_final_table=False,
             user_message=message,
+            plan_state=plan_state,
         ):
             yield event
             if event["type"] == "final_text":
@@ -166,6 +176,7 @@ class AgentExecutor:
         generated_tables: Optional[List[Dict]] = None,
         commit_final_table: bool = False,
         user_message: str = "",
+        plan_state: Optional[Dict[str, str]] = None,
     ) -> AsyncGenerator:
         """ReAct streaming loop: stream LLM output, handle tool calls, repeat."""
         msgs = list(messages)
@@ -251,10 +262,12 @@ class AgentExecutor:
                         params = json.loads(args_str) if args_str else {}
                     except Exception:
                         params = {}
+                    params = self._rewrite_table_id_for_plan_step(params, plan_state)
 
                     yield {"type": "tool_call", "skill": skill_name, "params": params}
 
                     result = await self._exec_skill(skill_name, params, tables, result_tables_store)
+                    self._update_plan_active_table_id(plan_state, result)
 
                     # Zero-row breaker: stop ReAct loop immediately
                     if self._is_zero_row_breaker_result(result):
@@ -457,6 +470,59 @@ class AgentExecutor:
         single_line = " ".join(result_text.strip().split())
         return single_line[:220] if single_line else "未知异常"
 
+    def _infer_original_table_id(self, steps: List[Dict], tables: Dict) -> str:
+        for step in steps:
+            if not isinstance(step, dict):
+                continue
+            raw_args = step.get("tool_args", step.get("args", {}))
+            if isinstance(raw_args, dict):
+                table_id = raw_args.get("table_id")
+                if isinstance(table_id, str) and table_id:
+                    return table_id
+        return next(iter(tables.keys()), "")
+
+    def _rewrite_table_id_for_plan_step(
+        self, params: Dict[str, Any], plan_state: Optional[Dict[str, str]]
+    ) -> Dict[str, Any]:
+        if not isinstance(params, dict) or not plan_state:
+            return params
+        original_table_id = plan_state.get("original_table_id", "")
+        current_active_table_id = plan_state.get("current_active_table_id", "")
+        if (
+            original_table_id
+            and current_active_table_id
+            and params.get("table_id") == original_table_id
+        ):
+            rewritten = dict(params)
+            rewritten["table_id"] = current_active_table_id
+            return rewritten
+        return params
+
+    def _update_plan_active_table_id(self, plan_state: Optional[Dict[str, str]], result: Any) -> None:
+        if not plan_state or not isinstance(result, dict):
+            return
+
+        new_table_id = ""
+
+        if isinstance(result.get("new_table_id"), str) and result.get("new_table_id"):
+            new_table_id = result["new_table_id"]
+        elif isinstance(result.get("table"), dict):
+            candidate = result["table"].get("table_id")
+            if isinstance(candidate, str) and candidate:
+                new_table_id = candidate
+        elif isinstance(result.get("table_id"), str) and result.get("table_id"):
+            new_table_id = result["table_id"]
+
+        if not new_table_id:
+            result_text = result.get("text", "")
+            if isinstance(result_text, str):
+                match = re.search(r"ID:\s*`?([a-zA-Z0-9_]+)`?", result_text)
+                if match:
+                    new_table_id = match.group(1)
+
+        if new_table_id:
+            plan_state["current_active_table_id"] = new_table_id
+
     def _system_prompt(self, tables: Dict, code_tool: bool = False) -> str:
         table_lines = []
         for tid, t in tables.items():
@@ -495,6 +561,11 @@ class AgentExecutor:
 - 如果你将调用 `execute_python` 生成 DataFrame 代码，必须先检查上方 Schema 再写代码。
 - 在任何计算、聚合或过滤前，必须先做列类型检查。
 - 对包含空值或数字字符串的 Object 列，必须使用 `pd.to_numeric(errors='coerce')` 并结合 `fillna()` 清洗。
+- CRITICAL RULE FOR NUMERIC CLEANING: 在对任意列做加减乘除、占比、求和、均值等数学计算之前，如果目标列 dtype 是 object/string，必须先做字符串清洗再转数值。必须先执行类似：
+  `df[col] = df[col].astype(str).str.replace(r'[^\\d.-]', '', regex=True)`，
+  将千分位逗号、货币符号、中文单位（如“元”）及其他非数字字符剔除；然后再执行
+  `df[col] = pd.to_numeric(df[col], errors='coerce')`。
+  严禁直接对未清洗的 object/string 列做数学运算或聚合。
 - 对日期列，优先使用 `pd.to_datetime(..., errors='coerce')` 标准化，再继续分析。
 - CRITICAL RULE FOR FILTERING: 在进行任何基于时间或账期的过滤前，必须先查看传入的 Data Schema。如果用户意图（如'2025年8月'）与 Schema 中的格式（如整数 202508 或带横杠的 '2025-08'）不一致，你必须在生成的 Pandas 代码中，优先使用 str.replace、正则提取或 pd.to_datetime 进行格式对齐，然后再执行 .loc 或 == 过滤。绝不允许用中文格式直接匹配数字列。
 - CRITICAL RULE FOR TIME FILTERING: 当你需要根据用户要求的时间（例如'2025年8月'）对数据进行过滤时，必须仔细检查 Data Schema 中的列名标签。
